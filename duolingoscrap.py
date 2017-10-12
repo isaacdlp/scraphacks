@@ -9,8 +9,14 @@ import sys
 
 
 languages = {
-    "pt" : "duolingo/Portuguese.html",
-    "ru" : "duolingo/Russian.html"
+    "pt": "duolingo/Portuguese.html",
+    "ru": "duolingo/Russian.html",
+    "es": "duolingo/Spanish.html",
+    "tr": "duolingo/Turkish.html",
+    "ca": "duolingo/Catalan.html",
+    "en": "duolingo/English.html",
+    "it": "duolingo/Italian.html",
+    "fr": "duolingo/French.html",
 }
 
 caches = { }
