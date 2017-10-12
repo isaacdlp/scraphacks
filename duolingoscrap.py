@@ -16,8 +16,8 @@ languages = {
 caches = { }
 
 lessons = [
-    "https://www.duolingo.com/skill/ru/Phrases2",
-    #"https://www.duolingo.com/skill/ru/Plurals",
+    #"https://www.duolingo.com/skill/pt/Basics-1",
+    #"https://www.duolingo.com/skill/pt/Basics-2",
     #"https://www.duolingo.com/skill/ru/Where-is-it%3F",
     #"https://www.duolingo.com/skill/ru/Animals-1",
     #"https://www.duolingo.com/skill/ru/Genitive-Case---1",
@@ -39,7 +39,6 @@ def doLesson(lesson):
     global driver, languages, caches
 
     cuteprint(lesson)
-    driver.get(lesson)
 
     i1 = lesson.rfind("/")
     anchor = lesson[(i1 + 1):]
@@ -54,13 +53,14 @@ def doLesson(lesson):
             file_html = BeautifulSoup(f.read(), "html.parser")
             caches[lang] = file_html
 
-    sleep(10)
-
     duo_base = file_html.select("div#duo_base")[0]
     duo_toc = file_html.select("div#duo_base > ol")[0]
 
     priors = duo_toc.select("a[href='#%s']" % anchor)
     if len(priors) == 0:
+        driver.get(lesson)
+        sleep(10)
+
         anchor_tag = BeautifulSoup("<a name='%s'></a>" % anchor, "html.parser")
         duo_base.append(anchor_tag)
 
@@ -77,6 +77,8 @@ def doLesson(lesson):
 
         link_tag = BeautifulSoup("<li><a href='#%s'>%s</a></li>" % (anchor, title), "html.parser")
         duo_toc.append(link_tag)
+
+        caches[lang] = BeautifulSoup(str(file_html), "html.parser")
     else:
         cuteprint("Anchor #%s already exists!" % anchor)
 
@@ -96,6 +98,11 @@ try:
 
     sleep(10)
 
+    if len(lessons) == 0:
+        els = driver.find_elements_by_css_selector("div.i12-l a.W1dac")
+        for el in els:
+            lessons.append(str(el.get_attribute("href")))
+
     for lesson in lessons:
         doLesson(lesson)
 
@@ -106,6 +113,6 @@ try:
             f.write(file_html.prettify(encoding="utf-8"))
 
 except Exception as e:
-    cuteprint(str(e))
+    cuteprint("ERROR: %s" % str(e))
 
 driver.quit()
