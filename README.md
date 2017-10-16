@@ -84,7 +84,6 @@ courses = [
     "https://www.safaribooksonline.com/library/view/python-data-structures/9781786467355/",
     "https://www.safaribooksonline.com/topics/java"
 ]
-
 ```
 
     * Useful Notes for topics with many courses:
