@@ -24,7 +24,7 @@ courses = [
 ]
 
 overwrite = False
-topicNum = 8
+topicNum = 0
 
 pdfReactor = None
 # pdfReactor = PDFreactor("http://localhost:9423/service/rest")
