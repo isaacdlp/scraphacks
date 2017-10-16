@@ -78,19 +78,16 @@ pdfReactor = None
         * The application will automatically detect whether it is a **book** or a **video tutorial** and proceed accordingly.
     * Download **ALL** courses from a given topic like `https://www.safaribooksonline.com/topics/python`
 * List any combination of topics and courses in any order in the `courses` array.
+    * Useful Notes for topics with many courses:
+        * If you just list one topic, you can further refine the **page** it starts downloading from using the `topicNum` variable.
+        * By default the program will **NOT** overwrite courses downloaded previously. You can switch this with the `overwrite` variable.
 
 ```
 courses = [
     "https://www.safaribooksonline.com/library/view/python-data-structures/9781786467355/",
     "https://www.safaribooksonline.com/topics/java"
 ]
-```
 
-    * Useful Notes for topics with many courses:
-        * If you just list one topic, you can further refine the **page** it starts downloading from using the `topicNum` variable.
-        * By default the program will **NOT** overwrite courses downloaded previously. You can switch this with the `overwrite` variable.
-
-```
 overwrite = False
 topicNum = 0
 ```
