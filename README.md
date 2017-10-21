@@ -1,6 +1,30 @@
 # Scrap Hacks
 Useful Web Scrapping "Hacks"
 
+## Prices
+
+Use `pricescrap.py` to compile a *csv file* with asset prices and upoload it to [OpenFinance](http://www.openfinance.es).
+
+### Installation
+
+* Install [Python 3](https://www.python.org)
+* Install **Lxml**
+`pip install lxml`
+* Install **RoboBrowser**
+`pip install robobrowser`
+* Edit your openfinance credentials in `pricescrap.json` (see "General Requirements" below).
+
+### Usage
+
+* Add the assets that you want to scap daily quotes for in the `assets` array.
+* The script offers support for the following data sources ...
+    * [Spain's MAB](https://www.bolsasymercados.es/mab)
+    * [MorningStar](http://tools.morningstar.es)
+    * [QueFondos](https://www.quefondos.com)
+* ... but it can be easily extended to support other price providers
+* Run the program
+`python pricescrap.py`
+
 ## Duolingo
 
 Use `duolingoscrap.py` to complile *cheat sheets* from [Duolingo](https://www.duolingo.com).
@@ -97,7 +121,7 @@ topicNum = 0
 
 ## General Requirements
 
-In both cases you need to create a credentials file named `duolingoscrap.json` or `safariscrap.json` with the following structure:
+In all cases you need to create a credentials file named `pricescrap.json`, `duolingoscrap.json` or `safariscrap.json` with the following structure:
 
 ```
 {

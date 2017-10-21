@@ -1,5 +1,6 @@
-.idea
+.idea/**
 safari/**
+pricescrap.json
 safariscrap.json
 duolingoscrap.json
 store

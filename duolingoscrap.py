@@ -1,9 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+
+# ScrapHacks
+# Web Scrapping Examples
+#
+# Copyright 2017-2018 Isaac de la Pena <isaacdlp@agoraeafi.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 from selenium import webdriver
 from time import sleep
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as soup
 import json
 import sys
 
@@ -56,7 +75,7 @@ def doLesson(lesson):
         file_html = caches[lang]
     else:
         with open(file_name, "r") as f:
-            file_html = BeautifulSoup(f.read(), "html.parser")
+            file_html = soup(f.read(), "html.parser")
             caches[lang] = file_html
 
     duo_base = file_html.select("div#duo_base")[0]
@@ -67,24 +86,24 @@ def doLesson(lesson):
         driver.get(lesson)
         sleep(10)
 
-        anchor_tag = BeautifulSoup("<a name='%s'></a>" % anchor, "html.parser")
+        anchor_tag = soup("<a name='%s'></a>" % anchor, "html.parser")
         duo_base.append(anchor_tag)
 
         title = driver.find_element_by_css_selector("div._1_vhy h2").text
         try:
             section = driver.find_element_by_css_selector("div._33Zau")
-            section_html = BeautifulSoup(section.get_attribute("outerHTML"), "html.parser")
+            section_html = soup(section.get_attribute("outerHTML"), "html.parser")
         except:
             cuteprint("Apparently it is EMPTY!")
-            section_html = BeautifulSoup("<div class=\"_33Zau\"><hr><h2>Empty</h2></div>", "html.parser")
+            section_html = soup("<div class=\"_33Zau\"><hr><h2>Empty</h2></div>", "html.parser")
 
         section_html.find("h2").string.replace_with(title)
         duo_base.append(section_html)
 
-        link_tag = BeautifulSoup("<li><a href='#%s'>%s</a></li>" % (anchor, title), "html.parser")
+        link_tag = soup("<li><a href='#%s'>%s</a></li>" % (anchor, title), "html.parser")
         duo_toc.append(link_tag)
 
-        caches[lang] = BeautifulSoup(str(file_html), "html.parser")
+        caches[lang] = soup(str(file_html), "html.parser")
     else:
         cuteprint("Anchor #%s already exists!" % anchor)
 
