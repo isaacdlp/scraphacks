@@ -38,26 +38,23 @@ languages = {
 caches = { }
 
 lessons = [
-    #"https://www.duolingo.com/skill/pt/Basics-1",
+    #"https://www.duolingo.com/skill/en/Arts",
     #"https://www.duolingo.com/skill/pt/Basics-2",
     #"https://www.duolingo.com/skill/ru/Where-is-it%3F",
     #"https://www.duolingo.com/skill/ru/Animals-1",
     #"https://www.duolingo.com/skill/ru/Genitive-Case---1",
     #"https://www.duolingo.com/skill/ru/Possessive-Modifiers-1",
     #"https://www.duolingo.com/skill/pt/Travel",
-    #"https://www.duolingo.com/skill/pt/Directions",
-    #"https://www.duolingo.com/skill/pt/Feelings",
-    #"https://www.duolingo.com/skill/pt/Verbs%3A-Present-Perfect",
-    #"https://www.duolingo.com/skill/pt/Sports",
-    #"https://www.duolingo.com/skill/pt/Abstract-Objects-1",
-    #"https://www.duolingo.com/skill/pt/Verbs%3A-Past-Perfect"
+    #"https://www.duolingo.com/skill/pt/Directions"
 ]
+
+pause = 5
 
 
 def cuteprint(text):
     print(text.encode(sys.stdout.encoding, 'ignore'))
 
-def doLesson(lesson):
+def doLesson(lesson, pause):
     global driver, languages, caches
 
     cuteprint(lesson)
@@ -81,7 +78,7 @@ def doLesson(lesson):
     priors = duo_toc.select("a[href='#%s']" % anchor)
     if len(priors) == 0:
         driver.get(lesson)
-        sleep(10)
+        sleep(pause)
 
         anchor_tag = soup("<a name='%s'></a>" % anchor, "html.parser")
         duo_base.append(anchor_tag)
@@ -126,7 +123,7 @@ try:
             lessons.append(str(el.get_attribute("href")))
 
     for lesson in lessons:
-        doLesson(lesson)
+        doLesson(lesson, pause)
 
     for lang in caches.keys():
         file_html = caches[lang]

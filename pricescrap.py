@@ -17,7 +17,7 @@
 # limitations under the License.
 
 
-import re, csv, json
+import re, csv, json, sys
 from random import shuffle
 import requests as req
 from robobrowser import RoboBrowser
@@ -45,6 +45,9 @@ assets = [
     }
 ]
 
+
+def cuteprint(text):
+    print(text.encode(sys.stdout.encoding, 'ignore'))
 
 def clean_string(str_in):
     str_out = str_in[0].text
@@ -79,10 +82,10 @@ with open(prices_file, "w", newline="") as f:
                 asset["value"] = clean_string(html.xpath("//*[@id=\"col3_content\"]/div/div[4]/p[1]/span[2]"))
 
             csvWriter.writerow([asset["id"], asset["date"], asset["value"]])
-            print("%i | %s | %s | %s" % (index + 1, asset["name"], asset["date"], asset["value"]))
+            cuteprint("%i | %s | %s | %s" % (index + 1, asset["name"], asset["date"], asset["value"]))
         except:
-            print(asset)
-            print("%i | ERROR processing %s" % (index + 1, asset["name"]))
+            # print(asset)
+            cuteprint("%i | ERROR processing %s" % (index + 1, asset["name"]))
 
 
 # Stateful part
