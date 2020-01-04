@@ -3,7 +3,7 @@ Useful Web Scrapping "Hacks"
 
 ## Prices
 
-Use `pricescrap.py` to compile a *csv file* with asset prices and upoload it to [OpenFinance](http://www.openfinance.es).
+Use `pricescrap.py` to compile a *csv file* with asset prices and upload it to [OpenFinance](http://www.openfinance.es).
 
 ### Installation
 
@@ -119,9 +119,18 @@ topicNum = 0
 * Run the program
 `python safariscrap.py`
 
+## Drumeo
+
+Use `drumeoscrap.py` to download *songs* and *video lessons* from [Drumeo](https://www.drumeo.com/).
+
+Very similar in requirements and functionality to **Safari Books** above, with two important additions:
+
+* Reads and writes *session cookies* to disk (in JSON format), avoiding unnecessary logins.
+* As well as whole video files, it can download ***.ts** video segments, assemble them and transform into **mpg** (using [FFMPEG](http://ffmpeg.org)).
+
 ## General Requirements
 
-In all cases you need to create a credentials file named `pricescrap.json`, `duolingoscrap.json` or `safariscrap.json` with the following structure:
+In all cases you need to create a credentials file named `pricescrap.json`, `duolingoscrap.json`, etc with the following structure:
 
 ```
 {

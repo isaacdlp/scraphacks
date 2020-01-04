@@ -1,8 +1,7 @@
 .idea/**
 safari/**
-pricescrap.json
-safariscrap.json
-duolingoscrap.json
+*scrap.cookie
+*scrap.json
 store
 duolingo/backup
 ghostdriver.log
