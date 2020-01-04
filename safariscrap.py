@@ -21,11 +21,7 @@ import requests
 from selenium import webdriver
 
 from browsermobproxy import Server
-import time
-import collections
-import os
-import shutil
-import json
+import time, collections, os, shutil, json
 
 import sys
 sys.path.append('./pdfreactor/')
