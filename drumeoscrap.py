@@ -144,7 +144,7 @@ def doPart(partLink, partName, seriesName, seriesFolder, index=0):
         if qualityIndex is not None:
             break
     if qualityIndex is None:
-        raise Exception("Quality '%s' not found!" % qualityTarget)
+        raise Exception("Could not find any of the target qualities %s!" % qualityTargets)
 
     #driver.find_elements_by_css_selector(qualityEl)[quality].click()
     driver.execute_script("document.querySelectorAll('%s')[%s].click();" % (qualityEl, qualityIndex))
@@ -244,7 +244,7 @@ songsFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/Songs"
 
 levelsList = ["all", "beginner", "intermediate", "advanced"]
 ffmpegExe = "/Users/isaacdlp/Downloads/Tools/FFMPEG/ffmpeg"
-qualityTargets = ["360", "540"]
+qualityTargets = ["360", "270", "540"]
 
 
 # Specific Functionality
