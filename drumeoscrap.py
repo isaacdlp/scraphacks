@@ -21,13 +21,16 @@ from selenium import webdriver
 from bs4 import BeautifulSoup as soup
 from browsermobproxy import Server
 from time import sleep
+from functools import partial
 import requests as req
 import subprocess as sub
-import os, shutil, json, sys
+import os, shutil, json, unicodedata
 
 
 # Generic Functions
 
+
+normalize = partial(unicodedata.normalize, 'NFC')
 
 def cleanName(name):
     max = 100
@@ -43,11 +46,11 @@ def doList(listFile, listFolder, blackFile, stages=None):
     html = soup(htmlFile, "html.parser")
 
     for dir in os.walk(listFolder):
-        existing = dir[1]
+        existing = list(map(normalize, dir[1]))
         break
 
     with open(blackFile, "r") as fin:
-        blacklist = json.load(fin)
+        blacklist = list(map(normalize, json.load(fin)))
 
     for serie in html.select("a.flex-row"):
         link = serie.get("href")
@@ -69,6 +72,7 @@ def doList(listFile, listFolder, blackFile, stages=None):
             title = "%s - %s" % (band, title)
         name = "%s %s" % (level, title)
 
+        name = normalize(name)
         if name in existing:
             existing.remove(name)
         elif name in blacklist:
@@ -256,6 +260,8 @@ songs = doList(songsFile, songsFolder, noSongsFile, levelsList)
 print("- - -")
 print("%s courses to download" % len(courses))
 print("%s songs to download" % len(songs))
+if (len(courses) + len(songs) == 0):
+    exit(0)
 
 try:
 
