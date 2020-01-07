@@ -87,6 +87,10 @@ def doList(listFile, listFolder, blackFile, stages=None):
     return series
 
 def doPart(partLink, partName, seriesName, seriesFolder, index=0):
+    minLesson = 0
+    if minLesson > 0 and index < minLesson:
+        return
+
     videoName = "%s.mp4" % partName
     if index > 0:
         videoName = "%02d %s" % (index, videoName)
@@ -354,4 +358,4 @@ try:
 
 finally:
     server.stop()
-    #driver.quit()
+    driver.quit()
