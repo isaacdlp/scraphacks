@@ -121,7 +121,7 @@ topicNum = 0
 
 ## Drumeo
 
-Use `drumeoscrap.py` to download *songs* and *video lessons* from [Drumeo](https://www.drumeo.com/).
+Use `drumeoscrap.py` to download *songs*, *play-alongs* and *video lessons* from [Drumeo](https://www.drumeo.com/).
 
 Very similar in requirements and functionality to **Safari Books** above, with two important additions:
 

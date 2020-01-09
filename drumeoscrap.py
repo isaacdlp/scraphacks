@@ -39,12 +39,13 @@ def cleanName(name):
         pre = pre[0:max]
     return pre
 
-def doList(listFile, listFolder, blackFile, stages=None):
+def doList(listFile, listFolder, blackFile, style, stages=None):
     series = []
     with open(listFile, "r") as fin:
         htmlFile = fin.read()
     html = soup(htmlFile, "html.parser")
 
+    existing = []
     for dir in os.walk(listFolder):
         existing = list(map(normalize, dir[1]))
         break
@@ -52,24 +53,38 @@ def doList(listFile, listFolder, blackFile, stages=None):
     with open(blackFile, "r") as fin:
         blacklist = list(map(normalize, json.load(fin)))
 
-    for serie in html.select("a.flex-row"):
-        link = serie.get("href")
+    selector = "a.flex-row"
+    if style == "plays":
+        selector = "div.content-table-row"
+    for serie in html.select(selector):
+        url = serie
+        if style == "plays":
+            url = serie.select_one("a")
+        link = url.get("href")
         if not link:
             continue
         level = cleanName(serie.select_one("div.x-tiny").text)
-        if stages:
+        if style == "songs":
             for n, stage in enumerate(stages, start=1):
                 if stage == level:
                     level = "%02d" % n
                     break
         else:
-            level = level.split(" ")[1]
-            if len(level) == 1:
-                level = "0%s" % level
+            levels = level.split(" ")
+            try:
+                level = levels[1]
+                level = int(level)
+            except:
+                level = 0
+            level = "%02d" % level
         title = cleanName(serie.select_one("p.item-title").text)
-        if stages:
-            band = cleanName(serie.select_one("p.text-drumeo").text)
-            title = "%s - %s" % (band, title)
+        if style == "songs" or style == "plays":
+            subtitle = cleanName(serie.select_one("p.text-drumeo").text).title()
+            if style == "songs":
+                title = "%s - %s" % (subtitle, title)
+            else:
+                bpm = cleanName(serie.select("div.x-tiny")[1].text).capitalize()
+                title = "%s - %s - %s" % (title, subtitle, bpm)
         name = "%s %s" % (level, title)
 
         name = normalize(name)
@@ -86,7 +101,7 @@ def doList(listFile, listFolder, blackFile, stages=None):
     series.sort(key = lambda x: x[1])
     return series
 
-def doPart(partLink, partName, seriesName, seriesFolder, index=0):
+def doPart(partLink, partName, seriesName, seriesFolder, index=0, resources=[], raiseOnResource=True):
     minLesson = 0
     if minLesson > 0 and index < minLesson:
         return
@@ -100,7 +115,8 @@ def doPart(partLink, partName, seriesName, seriesFolder, index=0):
 
     # Download additional resources
     if index < 2:
-        resources = ["pdf", "zip"]
+        resources.append(("pdf", "%s"))
+
         materials = None
         try:
             materials = driver.find_element_by_css_selector("div.download-dropdown")
@@ -109,15 +125,20 @@ def doPart(partLink, partName, seriesName, seriesFolder, index=0):
         if materials:
             for material in reversed(materials.find_elements_by_css_selector("a")):
                 href = material.get_attribute("href")
-                for resource in resources:
+                for resource, pattern in resources:
                     if href.lower().endswith(resource):
                         print("Downloading %s" % resource)
                         res = req.get("%s" % href)
-                        if res.status_code != 200:
-                            raise Exception("File %s did not download properly" % href)
-                        with open("%s/%s.%s" % (seriesFolder, seriesName[3:], resource), 'wb') as bout:
-                            bout.write(res.content)
-                        resources.remove(resource)
+                        if res.status_code == 200:
+                            with open("%s/%s.%s" % (seriesFolder, pattern % seriesName[3:], resource), 'wb') as bout:
+                                bout.write(res.content)
+                        else:
+                            msg = "File %s did not download properly" % href
+                            if raiseOnResource:
+                                raise Exception(msg)
+                            else:
+                                print(msg)
+                        resources.remove((resource, pattern))
                         break
 
     print("%02d %s" % (index, partName))
@@ -240,6 +261,7 @@ def doPart(partLink, partName, seriesName, seriesFolder, index=0):
 loginWeb = "https://www.drumeo.com/login/?lf=0"
 coursesWeb = "https://www.drumeo.com/members/lessons/courses"
 songsWeb = "https://www.drumeo.com/members/lessons/songs"
+playsWeb = "https://www.drumeo.com/members/lessons/play-alongs?limit=500&page=1&sort=-published_on"
 
 cookiesFile = "./drumeoscrap.cookie"
 credsFile = "./drumeoscrap.json"
@@ -247,8 +269,11 @@ coursesFile = "./drumeo_courses.html"
 noCoursesFile = "./drumeo_courses.black"
 songsFile = "./drumeo_songs.html"
 noSongsFile = "./drumeo_songs.black"
+playsFile = "./drumeo_plays.html"
+noPlaysFile = "./drumeo_plays.black"
 coursesFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/Lessons"
 songsFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/Songs"
+playsFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/PlayAlongs"
 
 levelsList = ["all", "beginner", "intermediate", "advanced"]
 ffmpegExe = "/Users/isaacdlp/Downloads/Tools/FFMPEG/ffmpeg"
@@ -259,12 +284,14 @@ qualityTargets = ["360", "270", "540"]
 
 
 # Set up lists
-courses = doList(coursesFile, coursesFolder, noCoursesFile)
-songs = doList(songsFile, songsFolder, noSongsFile, levelsList)
+courses = doList(coursesFile, coursesFolder, noCoursesFile, "courses")
+songs = doList(songsFile, songsFolder, noSongsFile, "songs", levelsList)
+plays = doList(playsFile, playsFolder, noPlaysFile, "plays")
 print("- - -")
 print("%s courses to download" % len(courses))
 print("%s songs to download" % len(songs))
-if (len(courses) + len(songs) == 0):
+print("%s play-alongs to download" % len(plays))
+if (len(courses) + len(songs) + len(plays) == 0):
     exit(0)
 
 try:
@@ -339,7 +366,7 @@ try:
         # Get lessons
         for index, (lessonLink, lessonName) in enumerate(lessons, start=1):
 
-            doPart(lessonLink, lessonName, courseName, folderCourse, index)
+            doPart(lessonLink, lessonName, courseName, folderCourse, index, [("zip", "%s")])
 
         shutil.move(folderCourse, "%s/%s" % (coursesFolder, courseName))
 
@@ -352,9 +379,22 @@ try:
         if not os.path.exists(folderSong):
             os.makedirs(folderSong)
 
-        doPart(songLink, songName[3:], songName, folderSong)
+        doPart(songLink, songName[3:], songName, folderSong, resources=[("zip", "%s")])
 
         shutil.move(folderSong, "%s/%s" % (songsFolder, songName))
+
+    # Get playalongs
+    for playLink, playName in plays:
+        print("- - -")
+        print("Processing '%s'" % playName)
+
+        folderPlay = "%s/_%s" % (playsFolder, playName)
+        if not os.path.exists(folderPlay):
+            os.makedirs(folderPlay)
+
+        doPart(playLink, playName[3:], playName, folderPlay, resources=[("mp3", "%s NoClick"), ("mp3", "%s")])
+
+        shutil.move(folderPlay, "%s/%s" % (playsFolder, playName))
 
 finally:
     server.stop()
