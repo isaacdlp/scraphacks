@@ -7,3 +7,4 @@ duolingo/backup
 ghostdriver.log
 bmp.log
 server.log
+__pycache__

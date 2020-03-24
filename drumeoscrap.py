@@ -101,6 +101,11 @@ def doList(listFile, listFolder, blackFile, style, stages=None):
     series.sort(key = lambda x: x[1])
     return series
 
+def doDump(list):
+    dump = [x[1] for x in plays]
+    with open("dump.json", "w") as fin:
+        json.dump(dump, fin, indent=4)
+
 def doPart(partLink, partName, seriesName, seriesFolder, index=0, resources=[], raiseOnResource=True):
     minLesson = 0
     if minLesson > 0 and index < minLesson:
@@ -287,6 +292,9 @@ qualityTargets = ["360", "270", "540"]
 courses = doList(coursesFile, coursesFolder, noCoursesFile, "courses")
 songs = doList(songsFile, songsFolder, noSongsFile, "songs", levelsList)
 plays = doList(playsFile, playsFolder, noPlaysFile, "plays")
+
+#doDump(courses)
+
 print("- - -")
 print("%s courses to download" % len(courses))
 print("%s songs to download" % len(songs))
