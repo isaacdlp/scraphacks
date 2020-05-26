@@ -1,8 +1,12 @@
-.idea/**
-safari/**
+.idea
+.DS_Store
+store
+
+download
+safari
+geckodriver.log
 *scrap.cookie
 *scrap.json
-store
 duolingo/backup
 ghostdriver.log
 bmp.log
