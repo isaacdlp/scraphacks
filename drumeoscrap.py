@@ -276,9 +276,9 @@ songsFile = "./drumeo_songs.html"
 noSongsFile = "./drumeo_songs.black"
 playsFile = "./drumeo_plays.html"
 noPlaysFile = "./drumeo_plays.black"
-coursesFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/Lessons"
-songsFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/Songs"
-playsFolder = "/Volumes/SAMSUNG/Music/Drums/Drumeo/PlayAlongs"
+coursesFolder = "~/Music/Drums/Drumeo/Lessons"
+songsFolder = "~/Music/Drums/Drumeo/Songs"
+playsFolder = "~/Music/Drums/Drumeo/PlayAlongs"
 
 levelsList = ["all", "beginner", "intermediate", "advanced"]
 ffmpegExe = "/Users/isaacdlp/Downloads/Tools/FFMPEG/ffmpeg"

@@ -15,9 +15,9 @@ try:
 finally:
     scrapper.stop()
 
-for i, prop in enumerate(props["Media"], start = 1):
-    res = req.get(prop["src"])
+for i, (src, type) in enumerate(props["Media"].items(), start = 1):
+    res = req.get(src)
     if res.status_code != 200:
         break
-    with open("%s/%s-%s.%s" % (folder, target, i, prop["type"]), 'wb') as bout:
+    with open("%s/%s-%s.%s" % (folder, target, i, type), 'wb') as bout:
         bout.write(res.content)

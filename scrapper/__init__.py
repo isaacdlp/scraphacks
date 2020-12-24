@@ -166,7 +166,7 @@ class Scrapper():
 
                 login_pass.send_keys(Keys.ENTER)
 
-            self.wait(  )
+            self.wait()
             self.browser.find_element_by_css_selector("div[data-click='profile_icon']")
 
         elif site == "instagram":
@@ -262,28 +262,33 @@ class Scrapper():
     def _instagram(self, url):
         props = self._base(url)
 
-        media = []
+        media = {}
 
         try:
             self.browser.execute_script("document.querySelector('article a').click()")
 
             while True:
-                self.wait()
 
-                try:
-                    image = self.browser.find_element_by_css_selector("article.M9sTE img[decoding='auto']")
-                    srcset = image.get_attribute("srcset")
-                    srcs = [src.split(" ") for src in srcset.split(",")]
-                    srcs.sort(reverse=True, key=lambda x: int(x[1][:-1]))
-                    src = srcs[0][0]
-                    media.append({"type" : "jpg", "src" : src})
-                except:
-                    try :
-                        video = self.browser.find_element_by_css_selector("article.M9sTE video")
-                        src = video.get_attribute("src")
-                        media.append({"type": "mpg", "src": src})
+                while True:
+                    self.wait()
+
+                    images = self.browser.find_elements_by_css_selector("article.M9sTE div.KL4Bh img")
+                    for image in images:
+                        srcset = image.get_attribute("srcset")
+                        srcs = [src.split(" ") for src in srcset.split(",")]
+                        srcs.sort(reverse=True, key=lambda x: int(x[1][:-1]))
+                        src = srcs[0][0]
+                        media[src] = "jpg"
+
+                    videos = self.browser.find_elements_by_css_selector("article.M9sTE video")
+                    for video in videos:
+                        src = video.get_attribute("poster")
+                        media[src] = "mpg"
+
+                    try:
+                        self.browser.execute_script("document.querySelector('button._6CZji').click()")
                     except:
-                        pass
+                        break
 
                 try:
                     self.browser.execute_script("document.querySelector('a.coreSpriteRightPaginationArrow').click()")
