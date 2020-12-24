@@ -3,6 +3,7 @@ import requests as req
 
 target = "isaacdlp"
 
+
 folder = "download/%s" % target
 if not os.path.exists(folder):
     os.mkdir(folder)
